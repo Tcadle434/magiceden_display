@@ -1,13 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
-import { getNftData } from "~/lib/data";
+import { getNftDataWithRetry } from "~/lib/data";
 import { NftData } from "~/lib/types";
 import NftCard from "~/components/NftCard";
 import SearchBar from "~/components/Searchbar";
 
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-
+/*
+ * Thanks for taking the time to review my code!
+ * I've written this using certain elements of the T3 Stack,
+ * specifically Next.js, TypeScript, and Tailwind CSS.
+ *
+ * To run this locally, just run an `npm install` and then `npm run dev`.
+ */
 const Home = (props: { initialNfts: NftData[] }) => {
   const [nfts, setNfts] = useState<NftData[]>(props.initialNfts);
   const [offset, setOffset] = useState(20);
@@ -32,7 +37,7 @@ const Home = (props: { initialNfts: NftData[] }) => {
   const loadMore = async () => {
     setLoading(true);
     // the below line should be -->  const newNfts = await getNftData(offset); <-- but has been modified per the above note
-    const newNfts = await getNftData();
+    const newNfts = await getNftDataWithRetry();
     setNfts((prevNfts) => [...prevNfts, ...newNfts]);
     setOffset((prevOffset) => prevOffset + 20);
     setLoading(false);
@@ -65,7 +70,7 @@ const Home = (props: { initialNfts: NftData[] }) => {
     <>
       <Head>
         <title>Magic Eden Solana NFT Display</title>
-        <meta name="description" content="Made by Thomas :)" />
+        <meta name="description" content="Made with love :)" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-16">
@@ -101,7 +106,7 @@ const Home = (props: { initialNfts: NftData[] }) => {
 };
 
 export async function getStaticProps() {
-  const initialNfts = await getNftData();
+  const initialNfts = await getNftDataWithRetry();
   return {
     props: {
       initialNfts: initialNfts,

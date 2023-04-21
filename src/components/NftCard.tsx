@@ -55,7 +55,7 @@ const NftCard = ({
         </div>
       </div>
       <div className="p-5">
-        <h5 className=" text-light mr-1 line-clamp-1 text-2xl font-bold tracking-tight">
+        <h5 className=" text-light mr-1 line-clamp-1 text-2xl font-bold tracking-tight text-[#FF99FF]">
           {collectionTitle}
         </h5>
         <p className="mt mb-3 line-clamp-1 font-normal text-white">{title}</p>
