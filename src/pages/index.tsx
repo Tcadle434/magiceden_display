@@ -4,12 +4,19 @@ import Head from "next/head";
 import { getNftData } from "~/lib/data";
 import { NftData } from "~/lib/types";
 import NftCard from "~/components/NftCard";
+import SearchBar from "~/components/Searchbar";
+
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 
 const Home = (props: { initialNfts: NftData[] }) => {
   const [nfts, setNfts] = useState<NftData[]>(props.initialNfts);
   const [offset, setOffset] = useState(20);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const filteredNfts = nfts.filter((nft) =>
+    nft.title!.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   /*
    * NOTE TO GRADERS:
@@ -39,7 +46,6 @@ const Home = (props: { initialNfts: NftData[] }) => {
         if (entries.length === 0) return;
         const firstEntry = entries[0];
         if (firstEntry?.isIntersecting) {
-          console.log("load more");
           loadMore();
         }
       },
@@ -54,6 +60,7 @@ const Home = (props: { initialNfts: NftData[] }) => {
       }
     };
   }, [loadMoreRef]);
+
   return (
     <>
       <Head>
@@ -61,11 +68,11 @@ const Home = (props: { initialNfts: NftData[] }) => {
         <meta name="description" content="Made by Thomas :)" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          ======= tmp =======
+      <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-16">
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <ul className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 sm:gap-x-6  lg:grid-cols-4 xl:gap-x-8">
-            {nfts.map((nft, index) => (
+            {filteredNfts.map((nft, index) => (
               <li key={index}>
                 <NftCard
                   title={nft.title}
@@ -77,6 +84,13 @@ const Home = (props: { initialNfts: NftData[] }) => {
               </li>
             ))}
           </ul>
+
+          {filteredNfts.length === 0 && (
+            <p className="mt-4 text-xl text-white">
+              No NFTs found matching your search.
+            </p>
+          )}
+
           <div ref={loadMoreRef} className="mb-8">
             {loading && <p className="text-white">Loading...</p>}
           </div>
